@@ -23,7 +23,10 @@ jobs:
       - run: |
           jupyter lite build --contents content --output-dir dist/jupyter
           cp -a dist/jupyter dist/notebooks-python
-          cp index.html dist/index.html
+          # JupyterLite peut garder en cache la liste des notebooks d’une publication précédente.
+          release_dir="notebooks-${GITHUB_SHA:0:7}"
+          cp -a dist/jupyter "dist/$release_dir"
+          sed "s|href=\"notebooks-python/|href=\"$release_dir/|" index.html > dist/index.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
